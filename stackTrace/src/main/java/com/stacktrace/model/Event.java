@@ -4,13 +4,13 @@ import java.time.LocalDate;
 
 public abstract class Event {
 
-    private static int nextId = 1;
 
-    protected int id;
     protected String title;
     protected String description;
     protected LocalDate deadline;
     protected Status status;
+    private LocalDate  createdAt;
+    private LocalDate completedAt;
 
     // constructor
     public Event (String title, String description, LocalDate deadline, Status status){
@@ -18,7 +18,7 @@ public abstract class Event {
         this.description = description;
         this.deadline = deadline;
         this.status = status;
-        this.id = nextId++;
+        this.createdAt = LocalDate.now();
     }
 
     // default description and status
@@ -39,12 +39,18 @@ public abstract class Event {
     public Status getStatus() {
         return status;
     }
-    public int getId() {
-        return id;
+    public LocalDate getCompletedAt() {
+        return completedAt;
+    }
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 
     // setters
     public void setStatus (Status newStatus) {
+        if (newStatus.equals(Status.COMPLETED)) {
+            this.completedAt = LocalDate.now();
+        }
         status = newStatus;
     }
     public void setTitle (String updatedTitle) {
