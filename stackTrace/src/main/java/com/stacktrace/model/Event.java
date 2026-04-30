@@ -1,7 +1,5 @@
 package com.stacktrace.model;
-
 import com.stacktrace.exception.ValidationException;
-
 import java.time.LocalDate;
 
 public abstract class Event {
@@ -99,6 +97,20 @@ public abstract class Event {
             throw new ValidationException("Deadline must be after start date.");
         }
         deadline = newDate;
+    }
+
+    public void setCompletedAt(LocalDate completedAt) throws ValidationException {
+        if (completedAt == null) {
+            throw new ValidationException("Deadline cannot be null");
+        }
+        this.completedAt = completedAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) throws ValidationException{
+        if (createdAt == null) {
+            throw new ValidationException("Deadline cannot be null");
+        }
+        this.createdAt = createdAt;
     }
 
     public boolean isActive () {

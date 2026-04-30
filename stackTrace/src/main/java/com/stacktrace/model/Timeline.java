@@ -1,13 +1,11 @@
 package com.stacktrace.model;
-
 import com.stacktrace.exception.ValidationException;
-
 import java.time.LocalDate;
 
 public class Timeline extends Event{
-    private static int nextId = 1;
+    private static Integer nextId = 1;
 
-    private int id;
+    private Integer id;
 
     public Timeline(String title, String description, LocalDate startDate, LocalDate deadline, Status status) throws ValidationException {
         super(title, description, startDate, deadline, status);
@@ -19,7 +17,7 @@ public class Timeline extends Event{
     }
 
     //getters
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
