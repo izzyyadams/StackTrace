@@ -12,13 +12,23 @@ public class Timeline extends Event{
         this.id = nextId++;
     }
 
-    public Timeline(String title, LocalDate deadline) throws ValidationException {
-        this(title, "", LocalDate.now(), deadline, Status.NOT_STARTED);
-    }
-
     //getters
     public Integer getId() {
         return id;
+    }
+
+    //used in my hashmap in manager to compare if two timelines are equal using id, hashCode used for buckets
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true; //check if self
+        if (o == null || getClass() != o.getClass()) return false; //make sure class is same
+        Timeline timeline = (Timeline) o; //cast o onto timeline since it is object when passed
+        return id == timeline.id; //compare ids
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
     }
 
 }

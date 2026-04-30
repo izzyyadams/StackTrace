@@ -13,22 +13,20 @@ public class Task extends Event{
     public Task(String title, String description, LocalDate startDate, LocalDate deadline, Status status, Priority priority, Effort effort, Integer timelineId) throws ValidationException {
         super(title, description, startDate, deadline, status);
         if (priority == null) {
-            throw new ValidationException("Priority cannot be null");
+            this.priority = Priority.LOW;
+        } else {
+            this.priority = priority;
         }
-        this.priority = priority;
         if (effort == null) {
-            throw new ValidationException("Effort cannot be null");
+            this.effort = Effort.LOW;
+        } else {
+            this.effort = effort;
         }
-        this.effort = effort;
         if (timelineId == null) {
             throw new ValidationException("Timeline id cannot be null");
         }
         this.timelineId = timelineId;
         this.id = nextId++;
-    }
-
-    public Task(String title, LocalDate deadline, Integer timelineId) throws ValidationException {
-        this(title, "", LocalDate.now(), deadline, Status.NOT_STARTED, Priority.LOW, Effort.LOW, timelineId);
     }
 
     //getters
@@ -57,5 +55,19 @@ public class Task extends Event{
             throw new ValidationException("Effort cannot be null");
         }
         effort = newEffort;
+    }
+
+    //used in my hashmap in manager to compare if two tasks are equal using id, hashCode used for buckets
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true; //check if self
+        if (o == null || getClass() != o.getClass()) return false; //make sure class is same
+        Task task = (Task) o; //cast o onto task since it is object when passed
+        return id == task.id; //compare ids
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
     }
 }

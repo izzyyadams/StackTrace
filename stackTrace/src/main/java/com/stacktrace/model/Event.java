@@ -19,11 +19,17 @@ public abstract class Event {
             throw new ValidationException("Title cannot be empty");
         }
         this.title = title;
-        this.description = description;
-        if (startDate == null) {
-            throw new ValidationException("Start date cannot be null");
+        if (description == null) {
+            this.description = "";
+        } else {
+            this.description = description;
         }
-        this.startDate = startDate;
+
+        if (startDate == null) {
+            this.startDate = LocalDate.now();
+        } else {
+            this.startDate = startDate;
+        }
         if (deadline == null) {
             throw new ValidationException("Deadline cannot be null");
         }
@@ -32,15 +38,11 @@ public abstract class Event {
         }
         this.deadline = deadline;
         if (status == null) {
-            throw new ValidationException("Status cannot be null");
+            this.status = Status.NOT_STARTED;
+        } else {
+            this.status = status;
         }
-        this.status = status;
         this.createdAt = LocalDate.now();
-    }
-
-    // default description, start date, and status
-    public Event (String title, LocalDate deadline) throws ValidationException {
-        this(title, "", LocalDate.now(), deadline, Status.NOT_STARTED);
     }
 
     // getters
@@ -106,7 +108,7 @@ public abstract class Event {
         this.completedAt = completedAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) throws ValidationException{
+    public void setCreatedAt(LocalDate createdAt) throws ValidationException {
         if (createdAt == null) {
             throw new ValidationException("Deadline cannot be null");
         }
