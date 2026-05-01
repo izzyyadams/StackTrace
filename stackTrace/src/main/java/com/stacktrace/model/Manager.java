@@ -5,14 +5,13 @@ import com.stacktrace.exception.ManagerException;
 import com.stacktrace.exception.ValidationException;
 import com.stacktrace.service.TaskDao;
 import com.stacktrace.service.TimelineDao;
+import org.springframework.stereotype.Service;
 
 import javax.xml.crypto.Data;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.PriorityQueue;
+import java.util.*;
 
+@Service
 public class Manager {
 
     private HashMap<Timeline, PriorityQueue<Task>> timelines = new HashMap<>();
@@ -192,6 +191,33 @@ public class Manager {
 
     public Task getNextTask(Timeline timeline){
         return timelines.get(timeline).peek();
+    }
+
+    //get all timelines
+    public Set<Timeline> getAllTimelines() {
+        return timelines.keySet();
+    }
+
+    //get timeline by id
+    public Timeline getTimelineById(Integer id) {
+        for (Timeline timeline : timelines.keySet()) {
+            if (timeline.getId() == id) {
+                return timeline;
+            }
+        }
+        return null;
+    }
+
+    //get task from timeline by id
+    public Task getTaskById(Integer timelineId, Integer taskId) {
+        Timeline timeline = getTimelineById(timelineId);
+        PriorityQueue<Task> tasks = getTimelinesTasks(timeline);
+        for (Task task : tasks) {
+            if (task.getId() == taskId) {
+                return task;
+            }
+        }
+        return null;
     }
 
 
