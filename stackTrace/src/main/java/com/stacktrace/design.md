@@ -65,7 +65,29 @@ software developers, primarily for personal or small-scale projects.
 - DELETE /timeslines/{id}/tasks/{id} → delete task
 - DELETE /timelines → delete all timelines
 
+## AI Integration
 
+### Why AI is Used
+Managing multiple timelines and tasks simultaneously makes it difficult for users to manually
+determine which task to prioritize next. The AI integration addresses this by analyzing all
+active timelines and tasks together, considering deadlines, priority, effort, and status to suggest the next task.
+
+### How it Works
+The AIHelper class sends a prompt to the OpenAI GPT-4.1-mini API containing a structured
+summary of all timelines and their tasks. The AI responds with a task title, which is matched
+back to a Task object in memory.
+
+### Fallback Behavior
+If the API call fails for any reason, the system falls back to getOverallNextTask() which
+finds the timeline with the soonest deadline and returns its highest priority task. This
+ensures the application remains functional without AI.
+
+## External Libraries and Tools
+- H2 Database — embedded relational database for persistence
+- Spring Boot — backend framework for REST API and dependency injection
+- JUnit 5 — unit testing framework
+- Google Fonts — typography
+- OpenAI API — AI task suggestion
 
 ## Design Decisions
 Key decisions you made and why:
