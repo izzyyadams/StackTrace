@@ -44,6 +44,9 @@ public class Task extends Event{
     }
 
     //setters
+    public void setId(int id) {
+        this.id = id;
+    }
     public void setPriority(Priority newPriority) throws ValidationException {
         if (newPriority == null) {
             throw new ValidationException("Priority cannot be null");

@@ -17,6 +17,12 @@ if (submitButton) {
                 effort: document.getElementById('effort').value,
                 timelineId: parseInt(id)
             })
-        }).then(() => window.location.href = `timeline.html?id=${id}`);
+        }).then(response => {
+            if (!response.ok) {
+                return response.text().then(error => alert(error));
+            } else {
+                window.location.href = `timeline.html?id=${id}`
+            }
+        });
     });
 }

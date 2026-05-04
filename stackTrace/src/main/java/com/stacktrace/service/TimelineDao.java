@@ -13,7 +13,7 @@ public class TimelineDao implements EventDao<Timeline> {
     public void create(Timeline timelineToCreate) throws DatabaseException {
         String sqlString = "INSERT INTO timelines (title, description, start_date, deadline, status, created_at, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(DbConfig.JDBC_URL);
-             PreparedStatement ps = conn.prepareStatement(sqlString)) {
+             PreparedStatement ps = conn.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS)){
             ps.setString(1, timelineToCreate.getTitle());
             ps.setString(2, timelineToCreate.getDescription());
             ps.setDate(3, Date.valueOf(timelineToCreate.getStartDate()));
@@ -53,8 +53,12 @@ public class TimelineDao implements EventDao<Timeline> {
              ResultSet rs = ps.executeQuery()) {
             while(rs.next()) {
                 Timeline newTimeline = new Timeline(rs.getString("title"), rs.getString("description"), rs.getDate("start_date").toLocalDate(), rs.getDate("deadline").toLocalDate(), Status.valueOf(rs.getString("status")));
-                newTimeline.setCompletedAt(rs.getDate("completed_at").toLocalDate());
                 newTimeline.setCreatedAt(rs.getDate("created_at").toLocalDate());
+                newTimeline.setId(rs.getInt("id"));
+                if (rs.getDate("completed_at") != null) {
+                    newTimeline.setCompletedAt(rs.getDate("completed_at").toLocalDate());
+                }
+
                 allTimelines.add(newTimeline);
             }
 
@@ -86,6 +90,7 @@ public class TimelineDao implements EventDao<Timeline> {
 
     @Override
     public void deleteOne(Integer idToDelete) throws DatabaseException {
+        System.out.println("Deleting timeline with id: " + idToDelete);
         String sqlString = "DELETE FROM timelines WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(DbConfig.JDBC_URL);
              PreparedStatement ps = conn.prepareStatement(sqlString)) {

@@ -15,7 +15,7 @@ public class TaskDao implements EventDao<Task> {
     public void create(Task taskToCreate) throws DatabaseException {
         String sqlString = "INSERT INTO tasks (timeline_id, title, description, start_date, deadline, status, priority, effort, created_at, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(DbConfig.JDBC_URL);
-             PreparedStatement ps = conn.prepareStatement(sqlString)) {
+             PreparedStatement ps = conn.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, taskToCreate.getTimelineId());
             ps.setString(2, taskToCreate.getTitle());
             ps.setString(3, taskToCreate.getDescription());
@@ -27,6 +27,10 @@ public class TaskDao implements EventDao<Task> {
             ps.setDate(9, Date.valueOf(taskToCreate.getCreatedAt()));
             ps.setDate(10, taskToCreate.getCompletedAt() != null ? Date.valueOf(taskToCreate.getCompletedAt()) : null);
             ps.executeUpdate();
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                taskToCreate.setId(generatedKeys.getInt(1));
+            }
         } catch (SQLException e) {
             throw new DatabaseException(e.getMessage(), e);
         }
@@ -58,8 +62,11 @@ public class TaskDao implements EventDao<Task> {
              ResultSet rs = ps.executeQuery()) {
             while(rs.next()) {
                 Task newTask = new Task(rs.getString("title"), rs.getString("description"), rs.getDate("start_date").toLocalDate(), rs.getDate("deadline").toLocalDate(), Status.valueOf(rs.getString("status")), Priority.valueOf(rs.getString("priority")), Effort.valueOf(rs.getString("effort")), rs.getInt("timeline_id"));
-                newTask.setCompletedAt(rs.getDate("completed_at").toLocalDate());
+                if (rs.getDate("completed_at") != null) {
+                    newTask.setCompletedAt(rs.getDate("completed_at").toLocalDate());
+                }
                 newTask.setCreatedAt(rs.getDate("created_at").toLocalDate());
+                newTask.setId(rs.getInt("id"));
                 allTasks.add(newTask);
             }
 

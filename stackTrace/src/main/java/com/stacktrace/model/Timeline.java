@@ -31,4 +31,9 @@ public class Timeline extends Event{
         return Integer.hashCode(id);
     }
 
+    //setter
+    public void setId(int id) {
+        this.id = id;
+    }
+
 }

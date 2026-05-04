@@ -33,7 +33,7 @@ public abstract class Event {
         if (deadline == null) {
             throw new ValidationException("Deadline cannot be null");
         }
-        if (deadline.isBefore(startDate)) {
+        if (deadline.isBefore(this.startDate)) {
             throw new ValidationException("Deadline must be after start date.");
         }
         this.deadline = deadline;

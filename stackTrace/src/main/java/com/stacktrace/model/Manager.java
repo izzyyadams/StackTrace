@@ -5,6 +5,7 @@ import com.stacktrace.exception.ManagerException;
 import com.stacktrace.exception.ValidationException;
 import com.stacktrace.service.TaskDao;
 import com.stacktrace.service.TimelineDao;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import javax.xml.crypto.Data;
@@ -27,6 +28,21 @@ public class Manager {
 
     public Manager() {
 
+    }
+
+    @PostConstruct
+    public void init() throws DatabaseException {
+        ArrayList<Timeline> allTimelines = timelineDao.readAll();
+        for (Timeline timeline : allTimelines) {
+            timelines.put(timeline, new PriorityQueue<>(taskComparator));
+        }
+        ArrayList<Task> allTasks = taskDao.readAll();
+        for (Task task : allTasks) {
+            Timeline parent = getTimelineById(task.getTimelineId());
+            if (parent != null) {
+                timelines.get(parent).add(task);
+            }
+        }
     }
 
     public void createTimeline(String title, String description, LocalDate startDate, LocalDate deadline, Status status) throws ValidationException, DatabaseException {
@@ -143,6 +159,7 @@ public class Manager {
     }
 
     public void deleteTimeline(Timeline timelineToDelete) throws ManagerException, DatabaseException {
+        System.out.println("deleteTimeline called with: " + timelineToDelete);
         deleteAllTasks(timelineToDelete);
         timelines.remove(timelineToDelete);
         timelineDao.deleteOne(timelineToDelete.getId());
@@ -189,8 +206,15 @@ public class Manager {
         return (completedTasks * 100) / totalTasks;
     }
 
-    public Task getNextTask(Timeline timeline){
-        return timelines.get(timeline).peek();
+    public Task getNextTask(Timeline timeline) {
+        PriorityQueue<Task> tasks = timelines.get(timeline);
+        if (tasks == null) return null;
+        for (Task task : tasks) {
+            if (task.isActive()) { //otherwise completed tasks will be considered
+                return task;
+            }
+        }
+        return null;
     }
 
     //get all timelines

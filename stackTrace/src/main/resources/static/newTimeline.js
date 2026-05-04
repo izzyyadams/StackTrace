@@ -12,6 +12,12 @@ if (submitButton) {
                 description: document.getElementById('description').value,
                 status: document.getElementById('status').value
             })
-        }).then(() => window.location.href = 'index.html');
+        }).then(response => {
+              if (!response.ok) {
+                  return response.text().then(error => alert(error));
+              } else {
+                  window.location.href = 'index.html'
+              }
+          });
     });
 }
