@@ -22,6 +22,10 @@ public class TimelineDao implements EventDao<Timeline> {
             ps.setDate(6, Date.valueOf(timelineToCreate.getCreatedAt()));
             ps.setDate(7, timelineToCreate.getCompletedAt() != null ? Date.valueOf(timelineToCreate.getCompletedAt()) : null);
             ps.executeUpdate();
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                timelineToCreate.setId(generatedKeys.getInt(1));
+            }
         } catch (SQLException e) {
             throw new DatabaseException(e.getMessage(), e);
         }
