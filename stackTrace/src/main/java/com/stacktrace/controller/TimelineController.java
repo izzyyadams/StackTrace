@@ -6,6 +6,7 @@ import com.stacktrace.exception.ValidationException;
 import com.stacktrace.model.Manager;
 import com.stacktrace.model.Task;
 import com.stacktrace.model.Timeline;
+import com.stacktrace.service.AIHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,9 @@ import java.util.Set;
 public class TimelineController {
     @Autowired
     private Manager manager;
+
+    @Autowired
+    private AIHelper aiHelper;
 
     //get all timelines
     // GET /timelines
@@ -140,5 +144,11 @@ public class TimelineController {
     @DeleteMapping
     public void deleteAllTasks() throws DatabaseException, ManagerException{
         manager.deleteAllTimelines();
+    }
+
+    //get overall next task from AI
+    @GetMapping("/suggest")
+    public Task suggestNextTask() {
+        return aiHelper.suggestNextTask();
     }
 }

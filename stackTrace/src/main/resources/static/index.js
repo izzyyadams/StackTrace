@@ -1,5 +1,6 @@
 const timelineContainer = document.getElementById("timelineContainer");
-const deleteAllButton = document.getElementById('deleteAllTimelinesButton')
+const deleteAllButton = document.getElementById('deleteAllTimelinesButton');
+const aiResultsContainer = document.getElementById('aiResponse');
 // each timeline on the home page
 if(timelineContainer) {
     fetch('/timelines')
@@ -61,6 +62,14 @@ if(timelineContainer) {
             method: 'DELETE'
         }).then(() => window.location.reload());
     });
+
+    fetch("/timelines/suggest")
+        .then(r => r.json())
+         .then(task => {
+            const taskTitle = document.createElement('p');
+            taskTitle.textContent = task.title;
+            aiResultsContainer.appendChild(taskTitle);
+        });
 
 }
 

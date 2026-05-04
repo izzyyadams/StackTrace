@@ -244,6 +244,23 @@ public class Manager {
         return null;
     }
 
+    //helper for get next overall task
+    public Timeline getNextDueTimeline(){;
+        Timeline soonestDeadline = null;
+        for( Timeline timeline : timelines.keySet()) {
+            if (soonestDeadline== null || timeline.getDeadline().isBefore(soonestDeadline.getDeadline())) {
+                soonestDeadline = timeline;
+            }
+        }
+        return soonestDeadline;
+    }
+
+    //get next task based on ALL timelines (fallback for AI API)
+    public Task getOverallNextTask() {
+        Timeline soonestTimeline = getNextDueTimeline();
+        return getNextTask(soonestTimeline);
+    }
+
 
 
 
